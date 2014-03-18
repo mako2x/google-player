@@ -63,7 +63,7 @@ class GooglePlay
 
     def parse_review_rating(node)
       div = node.xpath(".//div[@class='current-rating']").first
-      width = div['style'].match(/width: (\d+)\.0%/)[1].to_i
+      width = div['style'].match(/width: (\d+)%/)[1].to_i
       width / 20
     end
 
@@ -77,7 +77,6 @@ class GooglePlay
       dup.xpath(".//span[@class='review-title']").remove
       dup.xpath(".//div[@class='review-body']").text.strip
     end
-
 
     def parse_app_name(node)
       node.xpath("//div[@class='document-title']/div").text
