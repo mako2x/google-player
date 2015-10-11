@@ -14,7 +14,7 @@ class GooglePlay
         :rating_count   => parse_app_rating_count(doc),
         :rating_counts  => parse_app_rating_counts(doc),
         :rating_average => parse_app_rating_average(doc),
-        :description    => parse_app_descrption(doc),
+        :description    => parse_app_description(doc),
         :recent_change  => parse_app_recent_change(doc),
         :last_update    => parse_app_last_update(doc),
         :file_size      => parse_app_file_size(doc),
@@ -52,13 +52,17 @@ class GooglePlay
 
     def parse_review_user_id(node)
       a = node.xpath(".//span[@class='author-name']/a").first
-      a.nil? ? nil : a['data-userid']
+      a.nil? ? nil : a['href'].match(/id=(\w+)/)[1].to_i
     end
 
     def parse_review_date(node)
       text = node.xpath(".//span[@class='review-date']").text
-      text =~ /(\d+)\D+(\d+)\D+(\d+)/
-      Date.new($1.to_i, $2.to_i, $3.to_i)
+      begin
+        Date.parse(text)
+      rescue
+        text =~ /(\d+)\D+(\d+)\D+(\d+)/
+        Date.new($1.to_i, $2.to_i, $3.to_i)
+      end
     end
 
     def parse_review_rating(node)
@@ -87,7 +91,7 @@ class GooglePlay
     end
 
     def parse_app_developer(node)
-      node.xpath("//div[@itemprop='author']/a[@itemprop='name']").text
+      node.xpath("//a[@class='document-subtitle primary']/span[@itemprop='name']").text
     end
 
     def parse_app_developer_web(node)
@@ -121,8 +125,8 @@ class GooglePlay
       node.xpath("//div[@class='score']").text.to_f
     end
 
-    def parse_app_descrption(node)
-      node.xpath("//div[@class='app-orig-desc']").inner_html
+    def parse_app_description(node)
+      node.xpath("//div[@class='id-app-orig-desc']").inner_html
     end
 
     def parse_app_recent_change(node)
@@ -133,8 +137,12 @@ class GooglePlay
 
     def parse_app_last_update(node)
       text = node.xpath("//div[@itemprop='datePublished']").text
-      text =~ /(\d+)\D+(\d+)\D+(\d+)/
-      Date.new($1.to_i, $2.to_i, $3.to_i)
+      begin
+        Date.parse(text)
+      rescue
+        text =~ /(\d+)\D+(\d+)\D+(\d+)/
+        Date.new($1.to_i, $2.to_i, $3.to_i)
+      end
     end
 
     def parse_app_file_size(node)
