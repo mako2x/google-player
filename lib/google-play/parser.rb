@@ -47,7 +47,7 @@ class GooglePlay
 
     def parse_review_user(node)
       a = node.xpath(".//span[@class='author-name']/a").first
-      a.nil? ? '' : a['title']
+      a.nil? ? '' : a.text
     end
 
     def parse_review_user_id(node)
