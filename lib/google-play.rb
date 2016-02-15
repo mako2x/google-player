@@ -53,7 +53,8 @@ class GooglePlay
       :id              => id,
       :pageNum         => page,
       :reviewSortOrder => sort_order_num,
-      :reviewType      => 1
+      :reviewType      => 1,
+      :xhr => 1
     })
     html = JSON.parse(res.content.split("\n")[2] + ']')[0][2]
     raise GooglePlay::App::NotFoundError.new("'#{id}' is not found") if html.size == 0
